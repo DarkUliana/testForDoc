@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Ad extends Model
+class Link extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['id', 'created_at', 'updated_at'];
-
-    public function links()
+    public function ad()
     {
-        return $this->hasMany('App\Link');
+        return $this->belongsTo('App\Ad');
     }
 }
