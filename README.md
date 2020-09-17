@@ -1,13 +1,13 @@
 ## Розгортання проєкту
 
-####Requirements
+#### Requirements
 - PHP >= 7.3
 - MySQL database utf8mb4_general_ci
 - Composer
 
 Для запуску потрібно створити  та налаштувати файл .env подібний до .env.example
 
-####Запуск
+#### Запуск
 
 - ```composer install```
 - ```php artisan key:generate```
