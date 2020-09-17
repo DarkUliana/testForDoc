@@ -14,3 +14,5 @@
 - ```php artisan migrate```
 - ```php artisan serve --port=8080```
 
+Для форматування JSON використовувалася специфікація https://jsonapi.org/format/
+

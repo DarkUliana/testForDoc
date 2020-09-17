@@ -52,6 +52,7 @@ class AdController extends Controller
 
         $links = [];
         $requestLinks = $request->get('links');
+
         for ($i = 0; $i < count($requestLinks); ++$i) {
 
             $links[] = [
@@ -59,7 +60,7 @@ class AdController extends Controller
                 'main' => !$i
             ];
         }
-        var_dump($links);
+
         $newAd->links()->createMany($links);
 
         $data = [
