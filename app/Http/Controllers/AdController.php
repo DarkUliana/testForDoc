@@ -7,8 +7,6 @@ use App\Http\Requests\GetAllAds;
 use App\Http\Requests\GetOneAd;
 use App\Http\Requests\StoreOneAd;
 use App\Models\Ad;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AdController extends Controller
 {
@@ -20,7 +18,6 @@ class AdController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(GetAllAds $request, AdFormatter $formatter)
-//    public function index(Request $request)
     {
         $perPage = 10;
         $ads = Ad::with('links');
@@ -82,7 +79,6 @@ class AdController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(GetOneAd $request, AdFormatter $formatter, int $id)
-//    public function show(Request $request, AdFormatter $formatter, int $id)
     {
         $ad = Ad::findOrFail($id);
 
