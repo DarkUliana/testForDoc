@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class storeOneAd extends FormRequest
+class StoreOneAd extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class storeOneAd extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -30,5 +30,10 @@ class storeOneAd extends FormRequest
             'links' => 'required|array|min:1|max:3',
             'links.*' => 'string|max:2048'
         ];
+    }
+
+    public function all($keys = null)
+    {
+        return parent::json()->all($keys);
     }
 }

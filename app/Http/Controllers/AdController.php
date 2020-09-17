@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Formatters\AdFormatter;
+use App\Http\Requests\GetAllAds;
+use App\Http\Requests\GetOneAd;
+use App\Http\Requests\StoreOneAd;
 use App\Models\Ad;
-use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     ** @param \Illuminate\Http\Request $request
+     ** @param GetAllAds $request
+     * @param AdFormatter $formatter
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(GetAllAds $request, AdFormatter $formatter)
+//    public function index(Request $request)
     {
         $perPage = 10;
         $ads = Ad::with('links');
@@ -25,21 +31,13 @@ class AdController extends Controller
         }
         $ads = $ads
             ->limit($perPage)
-            ->offset($request->get('page') * $perPage)
+            ->offset(($request->get('page') - 1) * $perPage)
             ->get();
 
         $data = [];
         foreach ($ads as $ad) {
 
-            $data[] = [
-                'type' => 'ad',
-                'id' => $ad->id,
-                'attributes' => [
-                    'name' => $ad->name,
-                    'price' => $ad->price,
-                    'link' => $ad->links->where('main', true)->column('link')
-                ]
-            ];
+            $data[] = $formatter->format($ad);
         }
 
         return response()->json(['data' => $data]);
@@ -48,13 +46,24 @@ class AdController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param StoreOneAd $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreOneAd $request)
     {
-        $newAd = Ad::create($request->all(['name', 'price', 'description']));
-        $newAd->links()->createMany($request->get('links'));
+        $newAd = Ad::create($request->all());
+
+        $links = [];
+        $requestLinks = $request->get('links');
+        for ($i = 0; $i < count($requestLinks); ++$i) {
+
+            $links[] = [
+                'link' => $requestLinks[$i],
+                'main' => !$i
+            ];
+        }
+        var_dump($links);
+        $newAd->links()->createMany($links);
 
         $data = [
             'type' => 'ad',
@@ -67,11 +76,32 @@ class AdController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param GetOneAd $request
+     * @param AdFormatter $formatter
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show(GetOneAd $request, AdFormatter $formatter, int $id)
+//    public function show(Request $request, AdFormatter $formatter, int $id)
     {
-        //
+        $ad = Ad::findOrFail($id);
+
+        $attributes = $ad->toArray();
+        $data = $formatter->format($ad);
+
+        if ($request->get('fields')) {
+
+            if (in_array('description', $request->get('fields'))) {
+
+                $data['attributes']['description'] = $ad->description;
+            }
+
+            if (in_array('links', $request->get('fields'))) {
+
+                $data['attributes']['links'] = $ad->links->pluck('link');
+            }
+        }
+
+        return response()->json(['data' => $data]);
     }
 }

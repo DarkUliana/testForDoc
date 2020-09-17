@@ -9,8 +9,10 @@ class Link extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['link', 'main'];
+
     public function ad()
     {
-        return $this->belongsTo('App\Ad');
+        return $this->belongsTo('App\Models\Ad');
     }
 }

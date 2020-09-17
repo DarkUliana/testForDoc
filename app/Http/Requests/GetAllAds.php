@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class getOneAd extends FormRequest
+class GetAllAds extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class getOneAd extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,15 +24,14 @@ class getOneAd extends FormRequest
     public function rules()
     {
         return [
-            'fields' => 'array',
-            'fields.*' => 'string|in_array:description,links|distinct'
+            'page' => 'integer',
+            'sort' => 'string|in:price,created_at',
+            'oder' => 'string|in:asc,desc',
         ];
     }
 
     public function all($keys = null)
     {
-        $data = parent::all($keys);
-        $data['fields'] = $this->route('fields');
-        return $data;
+        return $this->input();
     }
 }
